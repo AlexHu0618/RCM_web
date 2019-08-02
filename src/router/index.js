@@ -159,6 +159,22 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/minepage',
+    component: Layout,
+    name: 'minepage',
+    children: [
+      {
+        path: 'index',
+        name: 'page1',
+        component: () => import('@/views/minepage/index'),
+        meta: {
+          title: 'Page1'
+        }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
