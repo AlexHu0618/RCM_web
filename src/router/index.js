@@ -61,6 +61,7 @@ export const constantRoutes = [
     redirect: '/example/table',
     name: 'Example',
     meta: { title: 'Example', icon: 'example' },
+    hidden: true,
     children: [
       {
         path: 'table',
@@ -80,6 +81,7 @@ export const constantRoutes = [
   {
     path: '/form',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -95,6 +97,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/nested/menu1',
     name: 'Nested',
+    hidden: true,
     meta: {
       title: 'Nested',
       icon: 'nested'
@@ -151,6 +154,7 @@ export const constantRoutes = [
   {
     path: 'external-link',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
@@ -160,16 +164,32 @@ export const constantRoutes = [
   },
 
   {
-    path: '/minepage',
+    path: '/realtime',
     component: Layout,
-    name: 'minepage',
+    name: 'realtime',
     children: [
       {
         path: 'index',
-        name: 'page1',
-        component: () => import('@/views/minepage/index'),
+        name: 'RTData',
+        component: () => import('@/views/realtime/index'),
         meta: {
-          title: 'Page1'
+          title: 'RT-chart'
+        }
+      }
+    ]
+  },
+
+  {
+    path: '/history',
+    component: Layout,
+    name: 'history',
+    children: [
+      {
+        path: 'index',
+        name: 'History',
+        component: () => import('@/views/history/index'),
+        meta: {
+          title: 'History'
         }
       }
     ]

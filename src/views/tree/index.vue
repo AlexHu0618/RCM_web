@@ -11,13 +11,19 @@
           highlight-current
           class="filter-tree"
           default-expand-all
-        />
+          @node-click="handleNodeClick">
+        </el-tree>
       </el-aside>
       <el-main>
-        <el-tabs type="border-card">
-          <el-tab-pane label="解调">解调</el-tab-pane>
-          <el-tab-pane label="加速度">配置管理</el-tab-pane>
-          <el-tab-pane label="速度">角色管理</el-tab-pane>
+        <el-tabs v-model="activeName" type="border-card" @tab-click="handleTabClick">
+          <el-tab-pane label="解调" name="demod">
+            <my-chart></my-chart>
+          </el-tab-pane>  
+          <el-tab-pane :lazy="true" label="加速度" name="acc">
+            <my-chart ref="mychild"></my-chart>
+          </el-tab-pane>
+          <el-tab-pane :lazy="true" label="速度" name="vel">
+          </el-tab-pane>
         </el-tabs>
       </el-main>
     </el-container>
@@ -25,47 +31,21 @@
 </template>
 
 <script>
-const API_PROXY = 'https://bird.ioliu.cn/v1/?url='
-import axios from 'axios'
+import {
+  getTree
+} from '@/api/tree.js'
+import mychart from '../../components/signalchart/index.vue'
 export default {
+  components: {
+    'my-chart': mychart
+  },
   data() {
     return {
+      activeName: 'demod',
+      curNodeID: 1,
+      curTab: 'demod',
       filterText: '',
-      data2: [{
-        id: 1,
-        label: 'Level one 1',
-        children: [{
-          id: 4,
-          label: 'Level two 1-1',
-          children: [{
-            id: 9,
-            label: 'Level three 1-1-1'
-          }, {
-            id: 10,
-            label: 'Level three 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: 'Level one 2',
-        children: [{
-          id: 5,
-          label: 'Level two 2-1'
-        }, {
-          id: 6,
-          label: 'Level two 2-2'
-        }]
-      }, {
-        id: 3,
-        label: 'Level one 3',
-        children: [{
-          id: 7,
-          label: 'Level two 3-1'
-        }, {
-          id: 8,
-          label: 'Level two 3-2'
-        }]
-      }],
+      data2: [],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -78,40 +58,34 @@ export default {
     }
   },
   mounted: function() {
-    axios.get(API_PROXY + 'http://www.gzrobot.net:5001/rest_api/v1/Tree/WorkShopList')
-      .then(response => {
-        for (let i of response.data) {
-          console.log(i['Id'])
-          var wkshop = {id: i['Id'], label: i['WorkShopName']}
-          axios.get(API_PROXY + 'http://www.gzrobot.net:5001/rest_api/v1/Tree/WorkShop/Device?WorkShopId=' + i['Id'])
-            // success to get data
-            .then(response => {
-              console.log(response)
-              var child_array = new Array()
-              for (let j of response.data) {
-                child_array.push({id: j['id'], label: j['equipmentName']})
-              }
-              wkshop['children'] = child_array
-              this.data2 = [wkshop]
-            })
-            // fail to get data
-            .catch(error => {
-              console.log(error)
-              alert('网络错误，不能访问')
-            })
-        }
-      })
-      // fail to get data
-      .catch(error => {
-        console.log(error)
-        alert('网络错误，不能访问')
-      })
+    getTree().then(response => {
+      console.log(response)
+      this.data2 = response.data
+    })
   },
 
   methods: {
     filterNode(value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1
+    },
+
+    handleNodeClick(node, data, value) {
+      if (data.isLeaf) {
+        this.curNodeID = node.gid
+        this.$store.dispatch('treechart/changeTreeNode', this.curNodeID)
+      } else {
+        this.curNodeID = node.id
+      }
+      /* console.log(data)
+      console.log(value) */
+    },
+    handleTabClick(tab) {
+      if (tab.name !== this.curTab) {
+        this.curTab = tab.name
+        this.$store.dispatch('treechart/changeTab', this.curTab)
+        this.$refs.mychild.drawCharts()
+      }
     }
   }
 }

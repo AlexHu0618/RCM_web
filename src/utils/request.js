@@ -1,7 +1,7 @@
-import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
-import store from '@/store'
-import { getToken } from '@/utils/auth'
+import axios from 'axios' // 引入axios
+import { MessageBox, Message } from 'element-ui' // 引入element—ui的库文件
+import store from '@/store' // 引入store管理
+import { getToken } from '@/utils/auth' // 引入公用方法翻遍token实现
 
 // create an axios instance
 const service = axios.create({
@@ -44,9 +44,10 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
+    console.log(res)
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (res.code !== 20000 && res.code != 200) {
       Message({
         message: res.message || 'Error',
         type: 'error',
