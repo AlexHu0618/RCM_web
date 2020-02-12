@@ -48,51 +48,65 @@
         @click="searchBtnOn"
       >搜索</el-button>
     </div>
-    <div id="chart"></div>
+    <div
+      id="chart"
+      :style="'height: 450px'"
+    >
+    </div>
   </div>
 </template>
 
 <script>
+import { getHistoryData } from '@/api/history-data'
+// import echarts from 'echarts'
+var echarts = require('echarts')
 export default {
   data() {
     return {
       nodeOptions: [{
-        value: '100001',
+        value: 1,
         label: '100001'
       }, {
-        value: '100002',
+        value: 2,
         label: '100002'
       }, {
-        value: '100003',
+        value: 3,
         label: '100003'
       }, {
-        value: '100004',
+        value: 4,
         label: '100004'
       }, {
-        value: '100005',
+        value: 5,
         label: '100005'
       }],
       nodeValue: '',
       varOptions: [{
-        value: 'maxtc',
+        value: 1,
+        name: 'maxtc',
         label: '雷电流峰值'
       }, {
-        value: 'gr',
+        value: 2,
+        name: 'gr',
         label: '接地电阻'
       }, {
-        value: 'lc',
+        value: 3,
+        name: 'lc',
         label: '漏电流'
       }, {
-        value: 'lv',
+        value: 4,
+        name: 'lv',
         label: '漏电压'
       }, {
-        value: 'temp',
+        value: 5,
+        name: 'temp',
         label: '温度'
       }, {
-        value: 'humi',
+        value: 6,
+        name: 'humi',
         label: '湿度'
       }, {
-        value: 'ev',
+        value: 7,
+        name: 'ev',
         label: '设备电压'
       }],
       varValue: '',
@@ -132,13 +146,93 @@ export default {
         }]
       },
       pickerValue: '',
-      isSearching: false
+      isSearching: false,
+      // for echarts
+      charts: '',
+      xdata: ['1', '2', '3'],
+      opinionData: [3, 4, 5]
     }
   },
+  mounted() {
+    this.$nextTick(function() {
+      this.drawLine('chart')
+    })
+  },
   methods: {
+    drawLine(id) {
+      this.charts = echarts.init(document.getElementById(id))
+      this.charts.setOption({
+        tooltip: {
+          trigger: 'axis'
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.xdata
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          type: 'line',
+          data: this.opinionData,
+          areaStyle: {}
+        }]
+      })
+    },
     searchBtnOn() {
       this.isSearching = true
-      alert(this.pickerValue)
+      const params = { 'id': this.varValue, 'begin_dt': this.pickerValue[0], 'end_dt': this.pickerValue[1] }
+      getHistoryData(params).then(response => {
+        console.log(response.data)
+        var oResp = response.data
+        if (oResp.isdetail) {
+          this.charts.setOption({
+            xAxis: {
+              data: oResp.time
+            },
+            series: [{
+              data: oResp.datas
+            }]
+          })
+        } else {
+          var aMean = []
+          var aMax = []
+          var aMin = []
+          for (var i = 0; i < oResp.datas.length; i++) {
+            aMean.push(oResp.datas[i].mean)
+            aMax.push(oResp.datas[i].max)
+            aMin.push(oResp.datas[i].min)
+          }
+          this.charts.setOption({
+            legend: {
+              data: ['mean', 'max', 'min']
+            },
+            xAxis: {
+              data: oResp.time
+            },
+            series: [{
+              name: 'mean',
+              type: 'line',
+              areaStyle: {},
+              data: aMean
+            }, {
+              name: 'max',
+              type: 'line',
+              areaStyle: {},
+              data: aMax
+            }, {
+              name: 'min',
+              type: 'line',
+              areaStyle: {},
+              data: aMin
+            }]
+          })
+        }
+
+        this.charts.resize()
+      })
+      this.isSearching = false
     }
   }
 }
