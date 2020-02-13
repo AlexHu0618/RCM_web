@@ -149,8 +149,8 @@ export default {
       isSearching: false,
       // for echarts
       charts: '',
-      xdata: ['1', '2', '3'],
-      opinionData: [3, 4, 5]
+      xdata: [],
+      opinionData: []
     }
   },
   mounted() {

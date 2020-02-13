@@ -172,9 +172,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'RTData',
         component: () => import('@/views/realtime/index'),
-        meta: {
-          title: 'RT-chart'
-        }
+        meta: { title: 'RT-chart', icon: 'list' }
       }
     ]
   },
@@ -188,9 +186,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'History',
         component: () => import('@/views/history/index'),
-        meta: {
-          title: 'History'
-        }
+        meta: { title: 'History', icon: 'chart' }
       }
     ]
   },
