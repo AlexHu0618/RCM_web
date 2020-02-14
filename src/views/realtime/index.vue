@@ -111,7 +111,7 @@ export default {
           trigger: 'axis'
         },
         legend: {
-          data: ['maxtc', 'gr', 'lc', 'lv', 'temp', 'humi', 'ev']
+          data: ['雷电流峰值', '接地电阻', '漏电流', '漏电压', '温度', '湿度', '设备电压']
         },
         grid: {
           left: '3%',
@@ -131,43 +131,43 @@ export default {
           type: 'value'
         },
         series: [{
-          name: 'maxtc',
+          name: '雷电流峰值',
           type: 'line',
           showSymbol: false,
           data: this.opinionData[0]
         },
         {
-          name: 'gr',
+          name: '接地电阻',
           type: 'line',
           showSymbol: false,
           data: this.opinionData[1]
         },
         {
-          name: 'lc',
+          name: '漏电流',
           type: 'line',
           showSymbol: false,
           data: this.opinionData[2]
         },
         {
-          name: 'lv',
+          name: '漏电压',
           type: 'line',
           showSymbol: false,
           data: this.opinionData[3]
         },
         {
-          name: 'temp',
+          name: '温度',
           type: 'line',
           showSymbol: false,
           data: this.opinionData[4]
         },
         {
-          name: 'humi',
+          name: '湿度',
           type: 'line',
           showSymbol: false,
           data: this.opinionData[5]
         },
         {
-          name: 'ev',
+          name: '设备电压',
           type: 'line',
           showSymbol: false,
           data: this.opinionData[6]

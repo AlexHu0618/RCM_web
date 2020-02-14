@@ -50,7 +50,7 @@
     </div>
     <div
       id="chart"
-      :style="'height: 450px'"
+      :style="'height: 500px'"
     >
     </div>
   </div>
@@ -149,8 +149,8 @@ export default {
       isSearching: false,
       // for echarts
       charts: '',
-      xdata: [],
-      opinionData: []
+      xdata: ['2020-00-00 00:00:00', '2020-00-00 00:00:10', '2020-00-00 00:00:20'],
+      opinionData: [1, 5, 10]
     }
   },
   mounted() {
@@ -162,9 +162,6 @@ export default {
     drawLine(id) {
       this.charts = echarts.init(document.getElementById(id))
       this.charts.setOption({
-        tooltip: {
-          trigger: 'axis'
-        },
         xAxis: {
           type: 'category',
           boundaryGap: false,
@@ -182,19 +179,42 @@ export default {
     },
     searchBtnOn() {
       this.isSearching = true
+      this.charts.showLoading()
       const params = { 'id': this.varValue, 'begin_dt': this.pickerValue[0], 'end_dt': this.pickerValue[1] }
       getHistoryData(params).then(response => {
         console.log(response.data)
         var oResp = response.data
         if (oResp.isdetail) {
           this.charts.setOption({
+            tooltip: {
+              trigger: 'axis'
+            },
+            toolbox: {
+              feature: {
+                dataView: { show: true, readOnly: false },
+                magicType: { show: true, type: ['line', 'bar'] },
+                restore: { show: true },
+                saveAsImage: { show: true }
+              }
+            },
+            legend: {
+              data: []
+            },
             xAxis: {
+              type: 'category',
+              boundaryGap: false,
               data: oResp.time
             },
+            yAxis: {
+              type: 'value'
+            },
             series: [{
+              name: '采样点数值',
+              type: 'line',
+              areaStyle: {},
               data: oResp.datas
             }]
-          })
+          }, true)
         } else {
           var aMean = []
           var aMax = []
@@ -205,33 +225,47 @@ export default {
             aMin.push(oResp.datas[i].min)
           }
           this.charts.setOption({
+            tooltip: {
+              trigger: 'axis'
+            },
+            toolbox: {
+              feature: {
+                dataView: { show: true, readOnly: false },
+                magicType: { show: true, type: ['line', 'bar'] },
+                restore: { show: true },
+                saveAsImage: { show: true }
+              }
+            },
             legend: {
-              data: ['mean', 'max', 'min']
+              data: ['平均值', '最大值', '最小值']
             },
             xAxis: {
               data: oResp.time
             },
+            yAxis: {
+              type: 'value'
+            },
             series: [{
-              name: 'mean',
+              name: '平均值',
               type: 'line',
               areaStyle: {},
               data: aMean
             }, {
-              name: 'max',
-              type: 'line',
+              name: '最大值',
+              type: 'bar',
               areaStyle: {},
               data: aMax
             }, {
-              name: 'min',
-              type: 'line',
+              name: '最小值',
+              type: 'bar',
               areaStyle: {},
               data: aMin
             }]
-          })
+          }, true)
         }
-
         this.charts.resize()
       })
+      this.charts.hideLoading()
       this.isSearching = false
     }
   }

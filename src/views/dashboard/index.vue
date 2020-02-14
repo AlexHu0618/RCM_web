@@ -34,7 +34,7 @@ export default {
     <iframe
       id="mobsf"
       allowfullscreen
-      src="http://localhost:8000"
+      src="http://39.108.137.187:8000/"
       scrolling="no"
       frameborder="0"
     ></iframe>

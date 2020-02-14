@@ -51,7 +51,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '大屏总览', icon: 'dashboard' }
     }]
   },
 
@@ -172,7 +172,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'RTData',
         component: () => import('@/views/realtime/index'),
-        meta: { title: 'RT-chart', icon: 'list' }
+        meta: { title: '实时数据', icon: 'list' }
       }
     ]
   },
@@ -186,7 +186,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'History',
         component: () => import('@/views/history/index'),
-        meta: { title: 'History', icon: 'chart' }
+        meta: { title: '历史数据', icon: 'chart' }
       }
     ]
   },
